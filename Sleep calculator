@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>حاسبة النوم | محمد الحديدي - احسب وقت نومك المثالي</title>
+    <meta name="description" content="استخدم حاسبة النوم المتقدمة لتحديد أفضل وقت للاستيقاظ والنوم بناءً على دورات النوم الطبيعية. استيقظ نشيطاً كل يوم مع نصائح محمد الحديدي للنوم الصحي.">
+    <meta name="keywords" content="حاسبة النوم, sleep calculator, محمد الحديدي, دورات النوم, كيف استيقظ نشيطا, وقت النوم المثالي">
+    <meta name="author" content="محمد الحديدي">
+    <link rel="canonical" href="https://sleep-calculator2026.blogspot.com/">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #020617;
+            --accent-blue: #38bdf8;
+            --accent-purple: #818cf8;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --card-bg: rgba(15, 23, 42, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --soft-yellow: #fef08a;
+            --gym-green: #00ff88;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-deep);
+            background-image: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+            color: var(--text-main);
+            font-family: 'Cairo', sans-serif;
+            display: flex; justify-content: center; align-items: flex-start;
+            min-height: 100vh; overflow-x: hidden;
+        }
+
+        .main-wrapper { width: 100%; max-width: 450px; padding: 25px 15px; display: flex; flex-direction: column; gap: 20px; position: relative; }
+        
+        .menu-trigger {
+            position: absolute; top: 25px; left: 15px;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+            color: var(--accent-blue); width: 45px; height: 45px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            cursor: pointer; z-index: 100; transition: 0.3s;
+        }
+
+        header { text-align: center; margin-bottom: 5px; }
+        header h1 { font-size: 2.2rem; font-weight: 900; margin: 0; color: var(--accent-blue); letter-spacing: -1px; }
+        header p { font-size: 1rem; color: var(--text-dim); font-weight: 700; margin-top: 5px; }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px; padding: 22px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .yellow-card {
+            background: var(--soft-yellow) !important;
+            color: #1e293b !important;
+            border: none !important;
+            box-shadow: 0 10px 25px rgba(250, 204, 21, 0.2);
+        }
+        .yellow-card p {
+            color: #1e293b !important;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+        .yellow-title { color: var(--soft-yellow) !important; }
+
+        .full-page-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-deep); z-index: 2000; display: none;
+            flex-direction: column; padding: 25px; overflow-y: auto;
+        }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+            color: var(--accent-blue); padding: 10px 20px; border-radius: 15px;
+            cursor: pointer; align-self: flex-start; margin-bottom: 25px; font-weight: 700;
+        }
+
+        .menu-list-item {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
+            padding: 20px; border-radius: 20px; margin-bottom: 15px;
+            display: flex; align-items: center; gap: 15px; cursor: pointer;
+        }
+
+        .time-selector { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        
+        input[type="time"] {
+            background: rgba(0,0,0,0.4); border: 2px solid var(--glass-border); border-radius: 20px;
+            color: #fff; font-size: 3.2rem; font-weight: 900; padding: 12px; width: 100%;
+            text-align: center;
+        }
+
+        .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+        
+        button {
+            border: none; border-radius: 18px; padding: 16px; font-size: 1rem; font-weight: 700;
+            cursor: pointer; font-family: 'Cairo', sans-serif; transition: 0.2s ease;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-main { background: var(--accent-blue); color: #020617; }
+        .btn-sub { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); }
+
+        .results-container { display: none; margin-top: 20px; }
+        .result-card {
+            background: linear-gradient(90deg, rgba(56, 189, 248, 0.1), transparent);
+            border-radius: 20px; padding: 18px; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid var(--glass-border); border-right: 5px solid var(--accent-blue);
+        }
+        .result-time { font-size: 1.5rem; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .time-icon { font-size: 1.1rem; }
+        .icon-sun { color: #facc15; }
+        .icon-moon { color: #94a3b8; }
+
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
+            display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px;
+        }
+        .modal-content {
+            background: var(--bg-deep); border: 1px solid var(--glass-border);
+            border-radius: 30px; width: 100%; max-width: 400px; max-height: 85vh;
+            overflow-y: auto; padding: 25px; position: relative;
+        }
+        .close-modal { position: sticky; top: 0; float: left; color: var(--accent-blue); font-size: 1.5rem; cursor: pointer; z-index: 10; }
+        
+        .breathe-section { text-align: center; }
+        .circle-box {
+            width: 140px; height: 140px; border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; position: relative;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.1);
+        }
+        .inner-dot { 
+            width: 70px; height: 70px; border-radius: 50%; 
+            background: linear-gradient(45deg, #38bdf8, #818cf8, #c084fc, #38bdf8);
+            background-size: 300% 300%;
+            animation: colorShift 5s ease infinite alternate;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+        @keyframes colorShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .timer { position: absolute; font-size: 2.4rem; font-weight: 900; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+
+        .meter-bar { height: 14px; background: rgba(0,0,0,0.5); border-radius: 20px; overflow: hidden; margin-top: 15px;}
+        .meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4ade80, #fbbf24, #f87171); transition: width 0.4s ease-out; }
+
+        .footer { text-align: center; font-size: 0.85rem; color: var(--text-dim); padding: 18px; background: rgba(0,0,0,0.2); border-radius: 25px; line-height: 1.8; }
+        .footer b { color: var(--accent-blue); }
+
+        /* ستايل النوت باد الجديد */
+        .notepad-area {
+            width: 100%; min-height: 250px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 15px; color: #fff; font-family: 'Cairo', sans-serif;
+            font-size: 1rem; line-height: 1.6; resize: none;
+        }
+        .day-selector-gym { display: flex; overflow-x: auto; gap: 8px; margin-bottom: 15px; padding-bottom: 5px; scrollbar-width: none; }
+        .day-selector-gym::-webkit-scrollbar { display: none; }
+        .day-tab-gym { background: rgba(255,255,255,0.05); padding: 8px 15px; border-radius: 12px; font-size: 0.85rem; white-space: nowrap; cursor: pointer; border: 1px solid var(--glass-border); }
+        .day-tab-gym.active { background: var(--gym-green); color: #000; font-weight: 800; border-color: var(--gym-green); }
+        .week-tracker-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+        .day-row { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 12px 18px; border-radius: 18px; border: 1px solid var(--glass-border); }
+        .day-label { font-weight: 700; color: var(--accent-blue); min-width: 60px; }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="menu-trigger" onclick="toggleModal(true)">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <header>
+        <h1>حاسبة النوم</h1>
+        <p>بواسطة: محمد الحديدي</p>
+    </header>
+
+    <div class="modal" id="menuModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="toggleModal(false)"><i class="fas fa-times-circle"></i></span>
+            <h2 style="color: var(--accent-blue); text-align: center; margin-bottom: 20px;">القائمة</h2>
+            <div class="menu-list-item" onclick="openFullPage('tipsPage')">
+                <i class="fas fa-lightbulb" style="color: var(--soft-yellow);"></i> <span style="font-weight: bold;">10 نصائح للنوم</span>
+            </div>
+            <div class="menu-list-item" onclick="openFullPage('trackerPage')">
+                <i class="fas fa-calendar-alt"></i> <span>سجل أوقات استيقاظك خلال الأسبوع</span>
+            </div>
+            <div class="menu-list-item" onclick="openFullPage('gymPage')">
+                <i class="fas fa-edit" style="color: var(--gym-green);"></i> <span>جدول اليوم</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="tipsPage" class="full-page-modal">
+        <div class="back-btn" onclick="closeFullPage('tipsPage')"><i class="fas fa-arrow-right"></i> رجوع</div>
+        <h2 class="yellow-title" style="text-align: center;">10 نصائح لنوم مثالي</h2>
+        <div class="glass-card yellow-card" style="margin-top: 10px;">
+            <p>1. ثبت موعد استيقاظك ونومك يومياً.</p>
+            <p>2. احرص على ظلام الغرفة التام.</p>
+            <p>3. تجنب الهاتف قبل النوم بساعة.</p>
+            <p>4. حافظ على برودة الغرفة (18-22 درجة).</p>
+            <p>5. قلل الكافيين في المساء.</p>
+            <p>6. لا تمارس رياضة عنيفة قبل النوم مباشرة.</p>
+            <p>7. عشاء خفيف قبل النوم بـ 3 ساعات.</p>
+            <p>8. استثمر في مرتبة ووسادة مريحة.</p>
+            <p>9. تعرض للشمس في الصباح الباكر.</p>
+            <p>10. مارس تمارين تنفس هادئة.</p>
+        </div>
+    </div>
+
+    <div id="trackerPage" class="full-page-modal">
+        <div class="back-btn" onclick="closeFullPage('trackerPage')"><i class="fas fa-arrow-right"></i> رجوع</div>
+        <h2 style="color: var(--accent-blue); text-align: center;">سجل أوقات استيقاظك</h2>
+        <div class="glass-card">
+            <p style="text-align:center; font-size: 0.9rem; margin-bottom: 15px;">سجل الوقت الذي صحيت فيه كل يوم من الأسبوع:</p>
+            <div class="week-tracker-grid">
+                <div class="day-row"><span class="day-label">الأحد</span><input type="time" id="time-sun" onchange="saveWeekData()"></div>
+                <div class="day-row"><span class="day-label">الأثنين</span><input type="time" id="time-mon" onchange="saveWeekData()"></div>
+                <div class="day-row"><span class="day-label">الثلاثاء</span><input type="time" id="time-tue" onchange="saveWeekData()"></div>
+                <div class="day-row"><span class="day-label">الأربعاء</span><input type="time" id="time-wed" onchange="saveWeekData()"></div>
+                <div class="day-row"><span class="day-label">الخميس</span><input type="time" id="time-thu" onchange="saveWeekData()"></div>
+                <div class="day-row"><span class="day-label">الجمعة</span><input type="time" id="time-fri" onchange="saveWeekData()"></div>
+                <div class="day-row"><span class="day-label">السبت</span><input type="time" id="time-sat" onchange="saveWeekData()"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gymPage" class="full-page-modal">
+        <div class="back-btn" onclick="closeFullPage('gymPage')"><i class="fas fa-arrow-right"></i> رجوع</div>
+        <h2 style="color: var(--gym-green); text-align: center;">جدولك المخصص</h2>
+        <div class="day-selector-gym" id="daySelectorGym">
+            <div class="day-tab-gym active" onclick="switchGymDay(0)">أحد</div>
+            <div class="day-tab-gym" onclick="switchGymDay(1)">أثنين</div>
+            <div class="day-tab-gym" onclick="switchGymDay(2)">ثلاثاء</div>
+            <div class="day-tab-gym" onclick="switchGymDay(3)">أربعاء</div>
+            <div class="day-tab-gym" onclick="switchGymDay(4)">خميس</div>
+            <div class="day-tab-gym" onclick="switchGymDay(5)">جمعة</div>
+            <div class="day-tab-gym" onclick="switchGymDay(6)">سبت</div>
+        </div>
+        <div class="glass-card">
+            <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 10px;">اكتب مهامك لهذا اليوم (سيتم الحفظ تلقائياً):</p>
+            <textarea id="customDaySchedule" class="notepad-area" placeholder="مثلاً:
+- تمرين صدر
+- مذاكرة لغة انجليزية
+- وجبة 1..." oninput="saveGymData()"></textarea>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <div class="time-selector" id="mainTimeSelector">
+            <span style="font-weight: 700; font-size: 0.95rem;">وقت الاستيقاظ المطلوب</span>
+            <input type="time" id="wakeupTime" value="07:00">
+        </div>
+        <div class="button-group">
+            <button class="btn-main" onclick="calculateSleep()">جدولة النوم</button>
+            <button class="btn-sub" onclick="sleepNow()">سأنام الآن</button>
+        </div>
+        <div id="results" class="results-container"></div>
+    </div>
+
+    <div class="glass-card">
+        <div class="breathe-section">
+            <div class="circle-box">
+                <div class="inner-dot" id="bc"></div>
+                <div class="timer" id="timer">0</div>
+            </div>
+            <h3 id="breatheStatus" style="font-size: 1.1rem; margin-bottom: 20px;">جاهز للاسترخاء؟</h3>
+            <button class="btn-sub" onclick="handleBreathe()" id="breatheCtrl" style="width: 100%;">
+                <i class="fas fa-play"></i> ابدأ التمرين
+            </button>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+            <span style="font-weight: 900;"><i class="fas fa-certificate" style="color:var(--accent-blue)"></i> جودة البيئة</span>
+            <div style="display:flex; gap:5px;">
+                <button class="btn-sub" onclick="switchCamera()" id="switchBtn" style="padding: 8px 12px; font-size: 0.85rem; display:none;"><i class="fas fa-sync"></i></button>
+                <button class="btn-sub" onclick="toggleLight()" id="lightBtn" style="padding: 8px 20px; font-size: 0.85rem;">فحص الضوء</button>
+            </div>
+        </div>
+        <div id="sensorArea" style="display:none;">
+            <div class="meter-bar"><div id="lightMeter" class="meter-fill"></div></div>
+            <p id="lightLabel" style="font-size: 0.85rem; text-align: center; margin-top: 10px; font-weight: 800;"></p>
+        </div>
+    </div>
+
+    <div class="footer" id="finalTips" style="display:none;">
+        <div>آخر موعد لتناول الكافيين: <b id="caffeineTime">--:--</b></div>
+        <div style="margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 5px;">
+            آخر موعد لتناول الطعام: <b id="mealTime">--:--</b>
+        </div>
+    </div>
+    <div class="footer" id="defaultFooter">جميع الحقوق محفوظة © 2026 | تطوير محمد الحديدي</div>
+</div>
+
+<video id="v" autoplay playsinline style="display:none;"></video>
+<canvas id="c" width="40" height="40" style="display:none;"></canvas>
+
+<script>
+    function toggleModal(show) { document.getElementById('menuModal').style.display = show ? 'flex' : 'none'; }
+    function openFullPage(id) { toggleModal(false); document.getElementById(id).style.display = 'flex'; }
+    function closeFullPage(id) { document.getElementById(id).style.display = 'none'; }
+
+    const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    function saveWeekData() {
+        const weekData = {};
+        days.forEach(day => weekData[day] = document.getElementById('time-' + day).value);
+        localStorage.setItem('sleepTrackerWeek', JSON.stringify(weekData));
+    }
+    function loadWeekData() {
+        const savedData = localStorage.getItem('sleepTrackerWeek');
+        if(savedData) {
+            const weekData = JSON.parse(savedData);
+            days.forEach(day => { if(weekData[day]) document.getElementById('time-' + day).value = weekData[day]; });
+        }
+    }
+    loadWeekData();
+
+    // منطق جدول اليوم المخصص الجديد
+    let currentGymDay = 0;
+    function switchGymDay(dayIndex) {
+        currentGymDay = dayIndex;
+        const tabs = document.querySelectorAll('.day-tab-gym');
+        tabs.forEach((tab, idx) => tab.classList.toggle('active', idx === dayIndex));
+        loadGymData();
+    }
+    function saveGymData() {
+        const data = JSON.parse(localStorage.getItem('customSchedule2026') || '{}');
+        data[currentGymDay] = document.getElementById('customDaySchedule').value;
+        localStorage.setItem('customSchedule2026', JSON.stringify(data));
+    }
+    function loadGymData() {
+        const data = JSON.parse(localStorage.getItem('customSchedule2026') || '{}');
+        document.getElementById('customDaySchedule').value = data[currentGymDay] || "";
+    }
+    switchGymDay(new Date().getDay());
+
+    function format12h(date, withIcon = false) {
+        let h = date.getHours(), m = date.getMinutes(), isPm = h >= 12;
+        let period = isPm ? 'مساءً' : 'صباحاً';
+        h = h % 12 || 12; m = m < 10 ? '0'+m : m;
+        if(withIcon) {
+            let iconClass = isPm ? 'fas fa-moon icon-moon' : 'fas fa-sun icon-sun';
+            return `${h}:${m} <i class="${iconClass} time-icon"></i>`;
+        }
+        return `${h}:${m} ${period}`;
+    }
+
+    function calculateSleep() {
+        document.getElementById('mainTimeSelector').style.display = 'flex';
+        const val = document.getElementById('wakeupTime').value;
+        if(!val) return;
+        const [h, m] = val.split(':').map(Number), container = document.getElementById('results');
+        container.innerHTML = '';
+        const opts = [{t:'نوم كافٍ', m:360, h:'6 ساعات'}, {t:'نوم كامل', m:450, h:'7 ساعات ونصف'}, {t:'نوم عميق جدا', m:540, h:'9 ساعات'}];
+        let firstSleepTime;
+        opts.forEach((o, index) => {
+            let d = new Date(); d.setHours(h, m, 0); d.setMinutes(d.getMinutes() - (o.m + 15));
+            if(index === 0) firstSleepTime = new Date(d.getTime());
+            container.innerHTML += `<div class="result-card"><div class="result-info"><h4>${o.t}</h4><p>${o.h}</p></div><div class="result-time">${format12h(d, true)}</div></div>`;
+        });
+        let cafTime = new Date(firstSleepTime.getTime()); cafTime.setHours(cafTime.getHours() - 6);
+        let foodTime = new Date(firstSleepTime.getTime()); foodTime.setHours(foodTime.getHours() - 3);
+        container.style.display = 'block';
+        document.getElementById('defaultFooter').style.display = 'none';
+        document.getElementById('finalTips').style.display = 'block';
+        document.getElementById('caffeineTime').innerText = format12h(cafTime);
+        document.getElementById('mealTime').innerText = format12h(foodTime);
+    }
+
+    function sleepNow() {
+        document.getElementById('mainTimeSelector').style.display = 'none';
+        const now = new Date(), container = document.getElementById('results');
+        container.innerHTML = '<p style="text-align:center; font-weight:900; font-size:0.85rem; color:var(--text-dim); margin-bottom:15px;">أفضل مواعيد للاستيقاظ:</p>';
+        const opts = [{t:'نوم كافٍ', m:360, h:'6 ساعات'}, {t:'نوم كامل', m:450, h:'7 ساعات ونصف'}, {t:'نوم عميق', m:540, h:'9 ساعات'}];
+        opts.forEach(o => {
+            let d = new Date(now.getTime() + (o.m + 15) * 60000);
+            container.innerHTML += `<div class="result-card" style="border-right-color: var(--accent-purple);"><div class="result-info"><h4>${o.t}</h4><p>${o.h}</p></div><div class="result-time">${format12h(d, true)}</div></div>`;
+        });
+        container.style.display = 'block';
+        document.getElementById('finalTips').style.display = 'none';
+        document.getElementById('defaultFooter').style.display = 'block';
+    }
+
+    let isB = false, bTimer;
+    function handleBreathe() {
+        const btn = document.getElementById('breatheCtrl');
+        isB = !isB;
+        if(isB) { btn.innerHTML = '<i class="fas fa-stop"></i> إيقاف'; startB(); }
+        else { btn.innerHTML = '<i class="fas fa-play"></i> ابدأ التمرين'; stopB(); }
+    }
+    function stopB() { clearInterval(bTimer); document.getElementById('bc').style.transform='scale(1)'; document.getElementById('timer').innerText='0'; document.getElementById('breatheStatus').innerText = "تمرين الاسترخاء"; }
+    function startB() {
+        const c = document.getElementById('bc'), t = document.getElementById('timer'), s = document.getElementById('breatheStatus');
+        const step = (d, scale, txt, next) => {
+            if(!isB) return;
+            s.innerText = txt; c.style.transition = `transform ${d}s linear`; c.style.transform = `scale(${scale})`;
+            let count = d; t.innerText = count;
+            bTimer = setInterval(() => { count--; t.innerText = count; if(count <= 0){ clearInterval(bTimer); next(); } }, 1000);
+        };
+        const run = () => step(4, 2, "شهيق هادئ...", () => step(7, 2, "اكتم النفس...", () => step(8, 1, "زفير طويل...", run)));
+        run();
+    }
+
+    let lActive = false, lStream, lAnim, currentFacingMode = "user";
+    async function toggleLight() { if(!lActive) { startCamera(currentFacingMode); } else { stopCamera(); } }
+    async function switchCamera() { currentFacingMode = (currentFacingMode === "user") ? "environment" : "user"; if(lActive) { if(lStream) lStream.getTracks().forEach(t => t.stop()); startCamera(currentFacingMode); } }
+    async function startCamera(mode) {
+        const area = document.getElementById('sensorArea'), btn = document.getElementById('lightBtn'), sw = document.getElementById('switchBtn');
+        const v = document.getElementById('v'), c = document.getElementById('c'), g = c.getContext('2d', {willReadFrequently: true});
+        try {
+            lStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode } });
+            v.srcObject = lStream; await v.play();
+            lActive = true; btn.innerText = "إيقاف"; sw.style.display = 'block'; area.style.display = 'block';
+            const loop = () => {
+                if(!lActive) return;
+                g.drawImage(v, 0, 0, 40, 40);
+                const p = g.getImageData(0,0,40,40).data;
+                let brightness = 0; for(let i=0; i<p.length; i+=4) brightness += (p[i] + p[i+1] + p[i+2]) / 3;
+                let avg = brightness / (p.length / 4);
+                let level = Math.min(100, Math.max(0, (avg / 180) * 100)); 
+                document.getElementById('lightMeter').style.width = level + '%';
+                const lbl = document.getElementById('lightLabel');
+                if(level < 8) { lbl.innerText = "بيئة مثالية للنوم العميق"; lbl.style.color = "#4ade80"; }
+                else if(level < 25) { lbl.innerText = "إضاءة خافتة جدا"; lbl.style.color = "#fbbf24"; }
+                else if(level < 50) { lbl.innerText = "إضاءة متوسطة - يفضل تقليلها"; lbl.style.color = "#fb923c"; }
+                else { lbl.innerText = "المكان ساطع جدا! يجب إطفاء الضوء"; lbl.style.color = "#f87171"; }
+                lAnim = requestAnimationFrame(loop);
+            }; loop();
+        } catch(e) { alert("يرجى السماح بالوصول للكاميرا."); }
+    }
+    function stopCamera() { const area = document.getElementById('sensorArea'), btn = document.getElementById('lightBtn'), sw = document.getElementById('switchBtn'); lActive = false; btn.innerText = "فحص الضوء"; sw.style.display = 'none'; area.style.display = 'none'; if(lStream) lStream.getTracks().forEach(t => t.stop()); cancelAnimationFrame(lAnim); }
+</script>
+</body>
+</html>
